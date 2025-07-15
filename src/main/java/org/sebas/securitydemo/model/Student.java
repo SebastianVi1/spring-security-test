@@ -1,4 +1,4 @@
-package org.sebas.securitydemo;
+package org.sebas.securitydemo.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
