@@ -30,7 +30,7 @@ public class StudentController {
         students.add(student);
     }
 
-    @GetMapping
+    @GetMapping("/")
     public String greet(HttpServletRequest request){
         return "Welcome to Sebastian" ;
     }
