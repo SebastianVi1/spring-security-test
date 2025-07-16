@@ -20,11 +20,10 @@ public class MyUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         Users user = repo.findByUsername(username);
-        if (username == null){
+        if (user == null){
             System.out.println("User Not FOund");
             throw new UsernameNotFoundException("user not found");
         }
-
         return new UserPrincipal(user);
     }
 }
