@@ -21,7 +21,7 @@ public class MyUserDetailsService implements UserDetailsService {
 
         Users user = repo.findByUsername(username);
         if (user == null){
-            System.out.println("User Not FOund");
+            System.out.println("User Not Found");
             throw new UsernameNotFoundException("user not found");
         }
         return new UserPrincipal(user);
