@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * REST controller for user operations - registration, login, and user management
+ */
 @RestController
 public class UserController {
     @Autowired
@@ -21,19 +24,26 @@ public class UserController {
             12
     );
 
-
+    /**
+     * Register new user - encrypts password before saving
+     */
     @PostMapping("/register")
     public Users register(@RequestBody Users user){
         user.setPassword(encoder.encode(user.getPassword()));
         return service.register(user);
     }
 
+    /**
+     * Get list of all users - requires JWT authentication
+     */
     @GetMapping("/get-users")
     public List<Users> usersList(){
         return service.usersList();
     }
 
-
+    /**
+     * User login - returns JWT token if successful, "fail" if not
+     */
     @PostMapping("/login")
     public String login(@RequestBody Users user){
         System.out.println(user);

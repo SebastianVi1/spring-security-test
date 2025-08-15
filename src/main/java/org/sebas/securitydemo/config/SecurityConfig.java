@@ -17,6 +17,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+/**
+ * Main Spring Security configuration class
+ * Defines security behavior for the entire application
+ */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -26,24 +30,25 @@ public class SecurityConfig {
     @Autowired
     private JwtFilter jwtFilter;
 
+    /**
+     * Main security filter chain configuration
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        //Disable csrf
+        // Disable CSRF for REST API
         http.csrf(customizer -> customizer.disable());
 
-
-        //All requests must be authorized first
+        // Configure authorization rules
         http.authorizeHttpRequests(request -> request
-                .requestMatchers("register", "login")// Skip auth on this urls
+                .requestMatchers("register", "login")  // Public endpoints
                 .permitAll()
                 .anyRequest()
                 .authenticated());
 
-        //Enable login form
-//        http.formLogin(Customizer.withDefaults());
+        // Use HTTP Basic authentication
         http.httpBasic(Customizer.withDefaults());
 
-
+        // Configure stateless sessions and add JWT filter
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(
                         jwtFilter, UsernamePasswordAuthenticationFilter.class);
@@ -51,19 +56,9 @@ public class SecurityConfig {
 
     }
 
-//    @Bean
-//    public UserDetailsService userDetailsService(){
-//        //Manage different users
-//
-//        UsersDetails user1 = User
-//                .withDefaultPasswordEncoder()
-//                .username("sebas")
-//                .password("1234")
-//                .roles("USER")
-//                .build();
-//        return new InMemoryUserDetailsManager(user1);
-//
-//    }
+    /**
+     * Authentication provider using database and BCrypt
+     */
     @Bean
     public AuthenticationProvider authenticationProvider(){
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
@@ -74,6 +69,9 @@ public class SecurityConfig {
         return provider;
     }
 
+    /**
+     * Authentication manager for coordinating authentication
+     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
        return config.getAuthenticationManager();

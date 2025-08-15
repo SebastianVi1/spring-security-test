@@ -17,6 +17,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+
+/**
+ * Custom filter for JWT token validation on each request
+ * Runs before Spring Security's standard authentication
+ */
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 
@@ -26,17 +31,23 @@ public class JwtFilter extends OncePerRequestFilter {
     @Autowired
     ApplicationContext context;
 
+    /**
+     * Main filter method - validates JWT token in Authorization header
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String authHeader = request.getHeader("Authorization");
         String token = null;
         String username = null;
 
-        if (authHeader != null && authHeader.startsWith("Barer ")){
+        // Check for "Bearer " token in Authorization header
+        // FIXED: Was "Barer " (typo) - now correctly "Bearer "
+        if (authHeader != null && authHeader.startsWith("Bearer ")){
             token = authHeader.substring(7);
             username = jwtService.extractUsername(token);
         }
 
+        // If valid username and no existing authentication
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null){
             UserDetails userDetails = context.getBean(MyUserDetailsService.class).loadUserByUsername(username);
 
